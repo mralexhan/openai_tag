@@ -1,0 +1,111 @@
+*{
+    font-family: "Arial";
+}
+
+body{
+    display: flex;
+}
+
+#leftSide{
+    width: 49vw;
+    margin-left: 2vw;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#rightSide{
+    width: 49vw;
+    height: 97vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+h1{
+    font-size: 2em; 
+    font-weight: bold;
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+}
+
+#uploadTitle{
+    width: 13vw;
+    height: 2vh;
+    padding: 10px;
+    border-radius: 10px;
+    border-style: solid;
+    background-color: rgb(47, 88, 163);
+    color: white;
+    font-size: 1em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    gap: 1vw;
+    transition-duration: 0.2s;
+}
+
+#uploadTitle:hover{
+    background-color: rgb(39, 72, 134);
+}
+
+#downloadCSV{
+    display: none;
+    width: 13vw;
+    font-size: 1em;
+    padding: 10px;
+    border-radius: 10px;
+    border-style: none;
+    background-color: #43B02A;
+    color: white;
+    transition-duration: 0.2s;
+}
+
+#downloadCSV:hover{
+    cursor: pointer;
+    background-color: #3b9d25;
+}
+
+@keyframes e-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+  
+#loader{
+    width: 1vw;
+    height: 1vw;
+    border: 0.2vw solid #ffffff;
+    border-top: 0.16vw solid rgb(47, 88, 163);
+    border-radius: 50%;
+    animation: e-spin 0.5s linear both infinite;
+}
+
+#extractBlock{
+    font-size: 1.3em;
+    margin: 2vh 0 2vh 0;
+}
+
+#pdfContainer{
+    width: 90%; 
+    border: 1px solid #ccc; 
+    height: 90%;
+    overflow-y: scroll;
+}
+
+#pdfButtons{
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+    margin-top: 2vh;
+}
+
+#prevPDF, #nextPDF{
+    opacity: 0;
+    pointer-events: none;
+}
