@@ -1,4 +1,34 @@
-//Ctrl+F5 if shit is weird
+//Ctrl+F5 if stuff is weird
+
+//AI Stuff
+let baseURL = "http://localhost:5000";
+
+if (window.location.hostname !== "localhost") {
+  baseURL = "https://openaitag-eda7ath0c2dheyfg.japaneast-01.azurewebsites.net";  // Replace with your actual Azure app URL
+}
+
+async function talkToOpenAI(prompt) {
+  const response = await fetch(`${baseURL}/openai/complete`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ prompt }),
+  });
+
+  const data = await response.json();
+  let json = "";
+  //extracts the json from the openai response
+  for(let i = 0; i < data.message.length; i++){
+    if (data.message.indexOf("{") ==  i){
+      json = data.message.substring(i, data.message.lastIndexOf("}") + 1);
+    }
+  }
+
+  return json;
+}
+
+
 
 //pdf display
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
@@ -114,8 +144,9 @@ document.getElementById("nextPDF").addEventListener("click", ()=>{
 document.getElementById("downloadCSV").addEventListener("click", ()=>{
   let data = [];
   data.push(["File Name", "Tags", "Summary", "Creation Date"]);
+
   for(let i = 0; i < indPDF.length; i++){
-    data.push([indPDF[i].filename, indPDF[i].tags, indPDF[i].summary, indPDF[i].date]);
+    data.push([escapeCSVField(indPDF[i].filename), escapeCSVField(indPDF[i].tags), escapeCSVField(indPDF[i].summary), escapeCSVField(indPDF[i].date)]);
   }
 
   const csvContent = data.map(row => row.join(",")).join("\n");
@@ -134,6 +165,26 @@ document.getElementById("downloadCSV").addEventListener("click", ()=>{
   URL.revokeObjectURL(url); // Free up memory
 
 });
+
+//deals with handling quotes, commas, and line breaks in the data when converting to csv
+function escapeCSVField(field) {
+  if (field == null) {
+    return '';
+  }
+  //converts data to string
+  let str;
+  if (Array.isArray(field)){
+    str = field.join(",");
+  }
+  else{
+    str = field.toString();
+  }
+  // checks if the data includes commas, quotes, or line breaks
+  if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+    return '"' + str.replace(/"/g, '""') + '"';
+  }
+  return str;
+}
 
 
 //function to render a pdf on screen
@@ -181,30 +232,28 @@ function createSummary(filename, tags, date, summary){
 }
 
 
-//AI Stuff
-let baseURL = "http://localhost:5000";
-
-if (window.location.hostname !== "localhost") {
-  baseURL = "https://openaitag-eda7ath0c2dheyfg.japaneast-01.azurewebsites.net";  // Replace with your actual Azure app URL
-}
-
-async function talkToOpenAI(prompt) {
-  const response = await fetch(`${baseURL}/openai/complete`, {
+//password stuff
+async function managePassword(password){
+  const response = await fetch(`${baseURL}/account/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ prompt }),
+    body: JSON.stringify({ password }),
   });
 
-  const data = await response.json();
-  let json = "";
-  //extracts the json from the openai response
-  for(let i = 0; i < data.message.length; i++){
-    if (data.message.indexOf("{") ==  i){
-      json = data.message.substring(i, data.message.lastIndexOf("}") + 1);
-    }
+  const result = await response.json();
+  if(result.success){
+    document.getElementById("tagger").style.display = "flex";
+    document.getElementById("loginForm").style.display = "none";
   }
-
-  return json;
+  else{
+    alert("Wrong Password!");
+  }
 }
+
+document.getElementById("loginForm").addEventListener("submit", (e)=>{
+  e.preventDefault();
+  let password = document.getElementById("password").value;
+  managePassword(password);
+});

@@ -7,30 +7,40 @@
     <title>File Tagging</title>
 </head>
 <body>
-    <div id="leftSide">
-        <h1>AI PDF Tagging & Summary</h1>
-        <label id="uploadTitle" for="formatfile">Choose File to Upload</label>
-
-        <div id="extractBlock">
-            <p id="name"></p>
-            <p id="date"></p>
-            <p id="keywords"></p>
-            <p id="summary"></p>
+    <form id="loginForm">
+        <h1>AI PDF Tagging</h1>
+        <p>Hello, welcome to our AI PDF tagging demo.</p>
+        <p>Before we get started, please enter the designated password</p>
+        <!-- <label for="password">Password: </label> -->
+        <input type="password" id="password" name="password" placeholder="Please input a password">
+        <button type="submit" id="submitPassword">Login</button>
+    </form>
+    <div id="tagger" style="display: none;">
+        <div id="leftSide">
+            <h1>AI PDF Tagging & Summary</h1>
+            <label id="uploadTitle" for="formatfile">Choose File to Upload</label>
+    
+            <div id="extractBlock">
+                <p id="name"></p>
+                <p id="date"></p>
+                <p id="keywords"></p>
+                <p id="summary"></p>
+            </div>
+            
+            <input id="formatfile" type="file" name="file" style="display: none;" multiple/>
+            <button id="uploadBtn" style="display: none;">Upload</button>
+            <button id="downloadCSV">Download as CSV</button>
+            
+            
         </div>
-        
-        <input id="formatfile" type="file" name="file" style="display: none;" multiple/>
-        <button id="uploadBtn" style="display: none;">Upload</button>
-        <button id="downloadCSV">Download as CSV</button>
-        
-        
-    </div>
-    <div id="rightSide">
-        <div id="pdfContainer">
-            <!-- The extracted text will be displayed here -->
-        </div>
-        <div id="pdfButtons">
-            <button id="prevPDF">Previous PDF</button>
-            <button id="nextPDF">Next PDF</button>
+        <div id="rightSide">
+            <div id="pdfContainer">
+                <!-- The extracted text will be displayed here -->
+            </div>
+            <div id="pdfButtons">
+                <button id="prevPDF">Previous PDF</button>
+                <button id="nextPDF">Next PDF</button>
+            </div>
         </div>
     </div>
 
