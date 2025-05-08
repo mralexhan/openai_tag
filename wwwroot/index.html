@@ -7,18 +7,14 @@
     <title>File Tagging</title>
 </head>
 <body>
-    <form id="loginForm">
-        <h1>AI PDF Tagging</h1>
-        <p>Hello, welcome to our AI PDF tagging demo.</p>
-        <p>Before we get started, please enter the designated password</p>
-        <!-- <label for="password">Password: </label> -->
-        <input type="password" id="password" name="password" placeholder="Please input a password">
-        <button type="submit" id="submitPassword">Login</button>
-    </form>
-    <div id="tagger" style="display: none;">
+    <div id="tagger">
         <div id="leftSide">
             <h1>AI PDF Tagging & Summary</h1>
-            <label id="uploadTitle" for="formatfile">Choose File to Upload</label>
+            <form id="loginForm">
+                <input type="password" id="password" name="password" placeholder="Please input the password">
+                <button type="submit" id="submitPassword">Authenticate</button>
+            </form>
+            <label id="uploadTitle" for="formatfile" style="display: none;">Choose File to Upload</label>
     
             <div id="extractBlock">
                 <p id="name"></p>

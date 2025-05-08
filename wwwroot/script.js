@@ -2,30 +2,52 @@
 
 //AI Stuff
 let baseURL = "http://localhost:5000";
+let password = "";
 
 if (window.location.hostname !== "localhost") {
   baseURL = "https://openaitag-eda7ath0c2dheyfg.japaneast-01.azurewebsites.net";  // Replace with your actual Azure app URL
 }
 
-async function talkToOpenAI(prompt) {
+//handles the login form
+document.getElementById("loginForm").addEventListener("submit", (e)=>{
+  e.preventDefault();
+  let pass = document.getElementById("password").value;
+  handleAPI("", pass);
+});
+
+//handles the API (both login and openai)
+async function handleAPI(prompt, pass) {
   const response = await fetch(`${baseURL}/openai/complete`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ prompt }),
+    body: JSON.stringify({ prompt, pass }),
   });
 
   const data = await response.json();
-  let json = "";
-  //extracts the json from the openai response
-  for(let i = 0; i < data.message.length; i++){
-    if (data.message.indexOf("{") ==  i){
-      json = data.message.substring(i, data.message.lastIndexOf("}") + 1);
+
+  if (data.success && prompt == ""){
+    password = pass;
+    document.getElementById("uploadTitle").style.display = "flex";
+    document.getElementById("loginForm").style.display = "none";
+    return null;
+  }
+  else if (data.success && prompt != ""){
+    let json = "";
+    //extracts the json from the openai response
+    for(let i = 0; i < data.message.length; i++){
+      if (data.message.indexOf("{") ==  i){
+        json = data.message.substring(i, data.message.lastIndexOf("}") + 1);
+      }
     }
+    return json;
+  }
+  else{
+    alert(data.message);
+    return null;
   }
 
-  return json;
 }
 
 
@@ -45,6 +67,7 @@ let actualUploadBtn = document.getElementById("uploadBtn");
 
 // Handle the file input change event
 fileInput.addEventListener('change', async (event) => {
+  indPDF = []; //resets the individual pdfs every time the user selects new files
   const selectedFiles = event.target.files;
   screenUploadBtn.innerHTML = "Loading<div id='loader'></div>";
 
@@ -84,10 +107,11 @@ fileInput.addEventListener('change', async (event) => {
   }
 
   //sends extracted pdf text to OpenAI API and deals with the consequences
-  talkToOpenAI(extractedText).then(response =>{
+  handleAPI(extractedText, password).then(response =>{
     let responseJSON = JSON.parse(response); //parses the JSON returned by openai API
     //saves the tags, summaries, and dates into the individual file objects
     for(let i = 0; i < responseJSON.files.length; i++){
+      console.log(responseJSON);
       indPDF[i].tags = responseJSON.files[i].tags;
       indPDF[i].summary = responseJSON.files[i].summary;
       const time = new Date();
@@ -107,6 +131,7 @@ fileInput.addEventListener('change', async (event) => {
     renderPDF(indPDF[0].pdf);
     
     screenUploadBtn.innerHTML = "Choose File to Upload";
+    extractedText = ""; //resets the extractedText
 
   });
 });
@@ -233,27 +258,21 @@ function createSummary(filename, tags, date, summary){
 
 
 //password stuff
-async function managePassword(password){
-  const response = await fetch(`${baseURL}/account/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ password }),
-  });
+// async function managePassword(password){
+//   const response = await fetch(`${baseURL}/account/login`, {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify({ password }),
+//   });
 
-  const result = await response.json();
-  if(result.success){
-    document.getElementById("tagger").style.display = "flex";
-    document.getElementById("loginForm").style.display = "none";
-  }
-  else{
-    alert("Wrong Password!");
-  }
-}
-
-document.getElementById("loginForm").addEventListener("submit", (e)=>{
-  e.preventDefault();
-  let password = document.getElementById("password").value;
-  managePassword(password);
-});
+//   const result = await response.json();
+//   if(result.success){
+//     document.getElementById("tagger").style.display = "flex";
+//     document.getElementById("loginForm").style.display = "none";
+//   }
+//   else{
+//     alert("Wrong Password!");
+//   }
+// }
